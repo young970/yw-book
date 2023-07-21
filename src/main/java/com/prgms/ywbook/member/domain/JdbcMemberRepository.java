@@ -4,10 +4,12 @@ import com.prgms.ywbook.global.exception.NotUpdateException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public class JdbcMemberRepository implements MemberRepository {
     private final RowMapper<Member> memberRowMapper = (resultSet, i) -> {
         UUID memberId = UUID.fromString(resultSet.getString("id"));

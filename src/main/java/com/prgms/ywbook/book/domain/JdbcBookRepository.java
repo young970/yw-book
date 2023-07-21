@@ -4,11 +4,13 @@ import com.prgms.ywbook.global.exception.NotUpdateException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public class JdbcBookRepository implements BookRepository{
     private final RowMapper<Book> bookRowMapper = (resultSet, i) -> {
         UUID bookId = UUID.fromString(resultSet.getString("id"));
