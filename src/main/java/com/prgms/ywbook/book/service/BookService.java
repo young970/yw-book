@@ -5,7 +5,6 @@ import com.prgms.ywbook.book.domain.BookRepository;
 import com.prgms.ywbook.book.service.dto.BookResponses;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 public class BookService {

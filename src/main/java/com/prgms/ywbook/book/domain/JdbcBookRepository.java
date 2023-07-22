@@ -28,7 +28,7 @@ public class JdbcBookRepository implements BookRepository{
 
     @Override
     public Optional<Book> findById(UUID bookId) {
-        String sql = "SELECT id, author, available FROM book WHERE id = ?";
+        String sql = "SELECT id, title, author, available FROM book WHERE id = ?";
         try {
             return Optional.ofNullable(jdbcTemplate.queryForObject(sql,
                     bookRowMapper,

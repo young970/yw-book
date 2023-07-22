@@ -36,14 +36,14 @@ public class RentalService {
         Member member = memberRepository.findByNumber(request.phoneNumber())
                 .orElseGet(() -> createMember(request.phoneNumber()));
 
-        Book book = bookRepository.findById(request.bookId())
-                .orElseThrow(() -> new NotFoundEntityException("해당 책은 존재하지 않습니다."));
+        request.bookIds().forEach((id) -> {
+                    Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundEntityException("해당 책은 존재하지 않습니다."));
+                    book.setAvailable(false);
+                    bookRepository.update(book);
 
-        book.setAvailable(false);
-        bookRepository.update(book);
-
-        Rental rental = new Rental(request.rentalId(), member.getMemberId(), request.bookId(), LocalDateTime.now());
-        rentalRepository.insert(rental);
+                    Rental rental = new Rental(request.getUUID(), member.getMemberId(), id, LocalDateTime.now());
+                    rentalRepository.insert(rental);
+                });
     }
 
     public FindBookResponses findRentalBookByNumber(String phoneNumber) {

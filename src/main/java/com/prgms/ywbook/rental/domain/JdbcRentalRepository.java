@@ -52,7 +52,7 @@ public class JdbcRentalRepository implements RentalRepository {
 
     @Override
     public Rental insert(Rental rental) {
-        String sql = "INSERT INTO book(id, member_id, book_id, rented_at) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO rental(id, member_id, book_id, rented_at) VALUES (?, ?, ?, ?)";
         int update = jdbcTemplate.update(sql,
                 rental.getId().toString(),
                 rental.getMemberId().toString(),
@@ -78,7 +78,7 @@ public class JdbcRentalRepository implements RentalRepository {
 
     @Override
     public Optional<JoinedRental> findJoinedRentalById(UUID joinedRentalId) {
-        String sql = "SELECT R.id, R.member_id, R.member_id, R.rented_at, M.phone_number, B.phone_number, B.author, B.available " +
+        String sql = "SELECT R.id, R.member_id, R.book_id, R.rented_at, M.phone_number, B.title, B.author, B.available " +
                 "FROM rental R " +
                 "INNER JOIN member M ON R.member_id = M.id " +
                 "INNER JOIN book B ON R.book_id = B.id " +
@@ -95,7 +95,7 @@ public class JdbcRentalRepository implements RentalRepository {
 
     @Override
     public List<JoinedRental> findJoinedRentalByPhoneNumber(PhoneNumber number) {
-        String sql = "SELECT R.id, R.member_id, R.member_id, R.rented_at, M.phone_number, B.phone_number, B.author, B.available " +
+        String sql = "SELECT R.id, R.member_id, R.book_id, R.rented_at, M.phone_number, B.title, B.author, B.available " +
                 "FROM rental R " +
                 "INNER JOIN member M ON R.member_id = M.id " +
                 "INNER JOIN book B ON R.book_id = B.id " +
@@ -105,7 +105,7 @@ public class JdbcRentalRepository implements RentalRepository {
 
     @Override
     public List<JoinedRental> findJoinedRentalByRentalAt(LocalDateTime time) {
-        String sql = "SELECT R.id, R.member_id, R.member_id, R.rented_at, M.phone_number, B.phone_number, B.author, B.available " +
+        String sql = "SELECT R.id, R.member_id, R.book_id, R.rented_at, M.phone_number, B.title, B.author, B.available " +
                 "FROM rental R " +
                 "INNER JOIN member M ON R.member_id = M.id " +
                 "INNER JOIN book B ON R.book_id = B.id " +

@@ -11,7 +11,7 @@ public class Author {
     }
 
     private void validate(String author) {
-        if (author.length() > 10){
+        if (author.length() > 30){
             throw new InvalidLengthException("작가명의 길이가 기준을 초과합니다.");
         }
     }
