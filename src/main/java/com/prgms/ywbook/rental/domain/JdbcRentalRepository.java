@@ -6,6 +6,7 @@ import com.prgms.ywbook.book.domain.Title;
 import com.prgms.ywbook.global.exception.NotUpdateException;
 import com.prgms.ywbook.member.domain.Member;
 import com.prgms.ywbook.member.domain.PhoneNumber;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -13,13 +14,14 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public class JdbcRentalRepository implements RentalRepository{
+public class JdbcRentalRepository implements RentalRepository {
     private static final RowMapper<JoinedRental> joinedRentalRowMapper = (resultSet, i) -> {
         UUID rentalId = UUID.fromString(resultSet.getString("R.id"));
-        LocalDateTime rentedAt = resultSet.getTimestamp("rented_at").toLocalDateTime();
+        LocalDateTime rentedAt = resultSet.getTimestamp("R.rented_at").toLocalDateTime();
 
         UUID memberId = UUID.fromString(resultSet.getString("R.member_id"));
         PhoneNumber phoneNumber = new PhoneNumber(resultSet.getString("M.phone_number"));
@@ -32,6 +34,14 @@ public class JdbcRentalRepository implements RentalRepository{
         Member member = new Member(memberId, phoneNumber);
         Book book = new Book(bookId, title, author, available);
         return new JoinedRental(rentalId, member, book, rentedAt);
+    };
+
+    private static final RowMapper<Rental> rentalRowMapper = (resultSet, i) -> {
+        UUID rentalId = UUID.fromString(resultSet.getString("id"));
+        UUID memberId = UUID.fromString(resultSet.getString("member_id"));
+        UUID bookId = UUID.fromString(resultSet.getString("book_id"));
+        LocalDateTime rentedAt = resultSet.getTimestamp("rented_at").toLocalDateTime();
+        return new Rental(rentalId, memberId, bookId, rentedAt);
     };
 
     private final JdbcTemplate jdbcTemplate;
@@ -53,6 +63,35 @@ public class JdbcRentalRepository implements RentalRepository{
         }
         return rental;
     }
+
+    @Override
+    public Optional<Rental> findById(UUID rentalId) {
+        String sql = "SELECT id, member_id, book_id, rented_at FROM rental WHERE id = ?";
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql,
+                    rentalRowMapper,
+                    rentalId.toString()));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<JoinedRental> findJoinedRentalById(UUID joinedRentalId) {
+        String sql = "SELECT R.id, R.member_id, R.member_id, R.rented_at, M.phone_number, B.phone_number, B.author, B.available " +
+                "FROM rental R " +
+                "INNER JOIN member M ON R.member_id = M.id " +
+                "INNER JOIN book B ON R.book_id = B.id " +
+                "WHERE R.id = ?";
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql,
+                    joinedRentalRowMapper,
+                    joinedRentalId.toString()));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
 
     @Override
     public List<JoinedRental> findJoinedRentalByPhoneNumber(PhoneNumber number) {

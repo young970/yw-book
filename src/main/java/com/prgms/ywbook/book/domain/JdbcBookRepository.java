@@ -62,4 +62,17 @@ public class JdbcBookRepository implements BookRepository{
         String sql = "SELECT id, title, author, available FROM book WHERE available = ?";
         return jdbcTemplate.query(sql, bookRowMapper, available);
     }
+
+    @Override
+    public Book update(Book book) {
+        String sql = "UPDATE book SET title = ?, author = ?, available = ? WHERE id = ?";
+        int update = jdbcTemplate.update(sql, book.getTitle(),
+                book.getAuthor(),
+                book.isAvailable(),
+                book.getId().toString());
+        if (update != 1) {
+            throw new NotUpdateException("update가 제대로 이루어지지 않았습니다.");
+        }
+        return book;
+    }
 }

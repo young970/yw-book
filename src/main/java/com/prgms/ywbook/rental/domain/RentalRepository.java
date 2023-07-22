@@ -4,10 +4,15 @@ import com.prgms.ywbook.member.domain.PhoneNumber;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface RentalRepository {
     Rental insert(Rental rental);
+
+    Optional<Rental> findById(UUID rentalId);
+
+    Optional<JoinedRental> findJoinedRentalById(UUID joinedRentalId);
 
     List<JoinedRental> findJoinedRentalByPhoneNumber(PhoneNumber number);
 

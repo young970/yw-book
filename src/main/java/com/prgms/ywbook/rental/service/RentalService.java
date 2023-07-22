@@ -1,5 +1,6 @@
 package com.prgms.ywbook.rental.service;
 
+import com.prgms.ywbook.book.domain.Book;
 import com.prgms.ywbook.book.domain.BookRepository;
 import com.prgms.ywbook.global.exception.NotFoundEntityException;
 import com.prgms.ywbook.member.domain.Member;
@@ -35,8 +36,11 @@ public class RentalService {
         Member member = memberRepository.findByNumber(request.phoneNumber())
                 .orElseGet(() -> createMember(request.phoneNumber()));
 
-        bookRepository.findById(request.bookId())
+        Book book = bookRepository.findById(request.bookId())
                 .orElseThrow(() -> new NotFoundEntityException("해당 책은 존재하지 않습니다."));
+
+        book.setAvailable(false);
+        bookRepository.update(book);
 
         Rental rental = new Rental(request.rentalId(), member.getMemberId(), request.bookId(), LocalDateTime.now());
         rentalRepository.insert(rental);
@@ -55,6 +59,13 @@ public class RentalService {
 
     @Transactional
     public void deleteById(UUID rentalId) {
+        JoinedRental joinedRental = rentalRepository.findJoinedRentalById(rentalId)
+                .orElseThrow(() -> new NotFoundEntityException("해당 대여 기록은 존재하지 않습니다."));
+
+        Book book = joinedRental.getBook();
+        book.setAvailable(true);
+        bookRepository.update(book);
+
         rentalRepository.deleteById(rentalId);
     }
 

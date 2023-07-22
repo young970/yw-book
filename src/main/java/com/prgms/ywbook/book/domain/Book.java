@@ -6,7 +6,7 @@ public class Book {
     private final UUID id;
     private final Title title;
     private final Author author;
-    private final boolean available;
+    private boolean available;
 
     public Book(UUID id, Title title, Author author, boolean available) {
         this.id = id;
@@ -29,5 +29,9 @@ public class Book {
 
     public boolean isAvailable() {
         return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 }

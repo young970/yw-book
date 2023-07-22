@@ -9,4 +9,5 @@ public interface BookRepository {
     Book insert(Book book);
     List<Book> findAll();
     List<Book> findAvailable(boolean available);
+    Book update(Book book);
 }
