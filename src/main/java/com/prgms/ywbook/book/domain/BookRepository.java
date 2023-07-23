@@ -10,4 +10,5 @@ public interface BookRepository {
     List<Book> findAll();
     List<Book> findAvailable(boolean available);
     Book update(Book book);
+    void deleteById(UUID id);
 }

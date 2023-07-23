@@ -75,4 +75,13 @@ public class JdbcBookRepository implements BookRepository{
         }
         return book;
     }
+
+    @Override
+    public void deleteById(UUID id) {
+        String sql = "DELETE FROM book WHERE id = ?";
+        int update = jdbcTemplate.update(sql, id.toString());
+        if (update != 1) {
+            throw new NotUpdateException("delete가 제대로 이루어지지 않았습니다.");
+        }
+    }
 }

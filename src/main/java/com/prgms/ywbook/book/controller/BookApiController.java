@@ -7,6 +7,8 @@ import com.prgms.ywbook.book.service.dto.BookResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RequestMapping("/api/book")
 @RestController
 public class BookApiController {
@@ -27,6 +29,12 @@ public class BookApiController {
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody CreateControllerRequest request){
         bookService.create(mapper.controllerDtoToServiceDto(request));
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable UUID id){
+        bookService.deleteById(id);
         return ResponseEntity.ok().build();
     }
 }

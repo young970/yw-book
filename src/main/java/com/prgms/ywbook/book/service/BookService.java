@@ -7,6 +7,9 @@ import com.prgms.ywbook.book.domain.Title;
 import com.prgms.ywbook.book.service.dto.BookResponses;
 import com.prgms.ywbook.book.service.dto.CreateServiceRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 
 @Service
@@ -25,5 +28,10 @@ public class BookService {
         Title title = new Title(request.title());
         Author author = new Author(request.author());
         bookRepository.insert(new Book(request.id(), title, author, true));
+    }
+
+    @Transactional
+    public void deleteById(UUID id) {
+        bookRepository.deleteById(id);
     }
 }

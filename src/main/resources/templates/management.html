@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <title>Title</title>
+
+    <script>
+        function createBook(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('titleInput').value;
+            const author = document.getElementById('authorInput').value;
+
+            const requestData = {
+                title: title,
+                author: author
+            };
+
+            fetch('/api/book', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('책이 성공적으로 등록되었습니다.');
+                        // 새로고침하여 책 목록을 갱신 (원하는 동작에 따라 변경 가능)
+                        location.reload();
+                    } else {
+                        alert('책 등록에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('책 등록에 실패했습니다.');
+                });
+        }
+    </script>
+
+</head>
+<body class="container-fluid">
+<h1>반납 연체되고 있는 책들</h1>
+<div class="d-grid gap-2 d-md-flex justify-content-md-start">
+    <a th:href="@{/}" class="btn btn-primary me-md-2" type="button">Home</a>
+</div>
+<table class="table table-striped table-hover">
+    <thead>
+    <tr>
+        <th scope="col">책 제목</th>
+        <th scope="col">저자</th>
+        <th scope="col">대여한 날짜</th>
+        <th scope="col">전화번호</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="rental: ${responses.rentals()}">
+        <td th:text="*{rental.title()}"></td>
+        <td th:text="*{rental.author()}"></td>
+        <td th:text="*{rental.rentedAt()}"></td>
+        <td th:text="*{rental.phoneNumber()}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<div>
+    <h2>새 책 등록</h2>
+    <form onsubmit="createBook(event)">
+        <div class="mb-3">
+            <label for="titleInput" class="form-label">책 제목</label>
+            <input type="text" class="form-control" id="titleInput" placeholder="Example input placeholder">
+        </div>
+        <div class="mb-3">
+            <label for="authorInput" class="form-label">저자</label>
+            <input type="text" class="form-control" id="authorInput" placeholder="Another input placeholder">
+        </div>
+        <button type="submit">등록</button>
+    </form>
+</div>
+</body>
+</html>

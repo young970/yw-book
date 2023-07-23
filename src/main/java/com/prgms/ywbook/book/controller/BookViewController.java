@@ -3,7 +3,6 @@ package com.prgms.ywbook.book.controller;
 import com.prgms.ywbook.book.controller.mapper.ControllerBookMapper;
 import com.prgms.ywbook.book.service.BookService;
 import com.prgms.ywbook.book.service.dto.BookResponses;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +21,6 @@ public class BookViewController {
     public String findAllAvailable(Model model) {
         BookResponses response = bookService.findAllAvailable();
         model.addAttribute("book", response);
-        return "book/books";
+        return "books";
     }
 }
