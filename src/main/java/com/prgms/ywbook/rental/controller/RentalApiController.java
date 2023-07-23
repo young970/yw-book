@@ -44,5 +44,4 @@ public class RentalApiController {
         rentalService.deleteById(rentalId);
         return ResponseEntity.ok().build();
     }
-
 }

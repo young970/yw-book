@@ -1,12 +1,11 @@
 package com.prgms.ywbook.book.controller;
 
+import com.prgms.ywbook.book.controller.dto.CreateControllerRequest;
 import com.prgms.ywbook.book.controller.mapper.ControllerBookMapper;
 import com.prgms.ywbook.book.service.BookService;
 import com.prgms.ywbook.book.service.dto.BookResponses;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/book")
 @RestController
@@ -23,5 +22,11 @@ public class BookApiController {
     public ResponseEntity<BookResponses> findAllAvailable() {
         BookResponses response = bookService.findAllAvailable();
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> create(@RequestBody CreateControllerRequest request){
+        bookService.create(mapper.controllerDtoToServiceDto(request));
+        return ResponseEntity.ok().build();
     }
 }
