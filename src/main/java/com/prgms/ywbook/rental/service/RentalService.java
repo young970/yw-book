@@ -59,10 +59,12 @@ public class RentalService {
 
     @Transactional
     public void deleteById(UUID rentalId) {
-        JoinedRental joinedRental = rentalRepository.findJoinedRentalById(rentalId)
+        Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new NotFoundEntityException("해당 대여 기록은 존재하지 않습니다."));
 
-        Book book = joinedRental.getBook();
+        Book book = bookRepository.findById(rental.getBookId())
+                .orElseThrow(() -> new NotFoundEntityException("해당 대여 기록은 존재하지 않습니다."));
+
         book.setAvailable(true);
         bookRepository.update(book);
 

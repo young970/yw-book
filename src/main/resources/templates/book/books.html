@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <title>Title</title>
+
+  <script>
+    const selectedBooks = []; // 선택한 책들의 정보를 저장하는 배열
+
+    function showRental(button) {
+      const bookId = button.getAttribute('data-book-id');
+      const title = button.getAttribute('data-title');
+      const author = button.getAttribute('data-author');
+
+      // 선택한 책의 정보를 배열에 추가
+      selectedBooks.push({ bookId, title, author});
+
+      // 대여할 목록 표시
+      const rentalListDiv = document.getElementById('rentalList');
+      let html = '';
+      selectedBooks.forEach(book => {
+        html += `<p>${book.title} ( ${book.author} )</p>`;
+      });
+      rentalListDiv.innerHTML = html;
+    }
+
+    function rentBooks() {
+      const phoneNumber = document.getElementById('phoneNumberInput').value;
+
+      if (phoneNumber.trim() === '') {
+        alert('전화번호를 입력해주세요.');
+        return;
+      }
+
+      // API 호출
+      const requestData = {
+        phoneNumber: phoneNumber,
+        bookIds: selectedBooks.map(book => book.bookId)
+      };
+
+      fetch('/api/rental', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+      })
+              .then(response => {
+                if (response.ok) {
+                  alert('대여가 완료되었습니다.');
+                  // 대여 완료 후 페이지 리로드 (원하는 동작에 따라 변경 가능)
+                  location.reload();
+                } else {
+                  alert('대여에 실패하였습니다.');
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                alert('대여에 실패하였습니다.');
+              });
+    }
+  </script>
+
+</head>
+<body class="container-fluid">
+<div class="row">
+  <div class="col">
+    <h1>All Voucher</h1>
+    <table class="table table-striped table-hover">
+      <thead>
+      <tr>
+        <th scope="col">제목</th>
+        <th scope="col">작가</th>
+        <th scope="col">대여</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="book: ${book.books()}">
+        <td th:text="${book.title}"></td>
+        <td th:text="${book.author}"></td>
+        <!-- 대여 버튼 클릭 시, 오른쪽 영역에 대여할 목록 표시 -->
+        <td>
+          <button th:attr="data-book-id=${book.bookId}, data-title=${book.title}, data-author=${book.author}" onclick="showRental(this)">
+            대여
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <h2>대여할 목록</h2>
+    <div id="rentalList"></div>
+    <input type="text" id="phoneNumberInput" placeholder="전화번호를 입력하세요">
+    <button onclick="rentBooks()">대여</button>
+  </div>
+</div>
+</body>
+</html>

@@ -77,6 +77,12 @@ public class JdbcRentalRepository implements RentalRepository {
     }
 
     @Override
+    public List<Rental> findByRentedAt(LocalDateTime time) {
+        String sql = "SELECT id, member_id, book_id, rented_at FROM rental WHERE rented_at = ?";
+        return jdbcTemplate.query(sql, rentalRowMapper, Timestamp.valueOf(time));
+    }
+
+    @Override
     public Optional<JoinedRental> findJoinedRentalById(UUID joinedRentalId) {
         String sql = "SELECT R.id, R.member_id, R.book_id, R.rented_at, M.phone_number, B.title, B.author, B.available " +
                 "FROM rental R " +
@@ -91,7 +97,6 @@ public class JdbcRentalRepository implements RentalRepository {
             return Optional.empty();
         }
     }
-
 
     @Override
     public List<JoinedRental> findJoinedRentalByPhoneNumber(PhoneNumber number) {

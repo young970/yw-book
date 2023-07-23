@@ -19,6 +19,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    //타입리프
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     //DB설정
     runtimeOnly 'mysql:mysql-connector-java:8.0.32'
     //mapStruct

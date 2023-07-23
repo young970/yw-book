@@ -12,6 +12,8 @@ public interface RentalRepository {
 
     Optional<Rental> findById(UUID rentalId);
 
+    List<Rental> findByRentedAt(LocalDateTime time);
+
     Optional<JoinedRental> findJoinedRentalById(UUID joinedRentalId);
 
     List<JoinedRental> findJoinedRentalByPhoneNumber(PhoneNumber number);
