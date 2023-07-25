@@ -2,7 +2,7 @@ package com.prgms.ywbook.rental.service;
 
 import com.prgms.ywbook.book.domain.Book;
 import com.prgms.ywbook.book.domain.BookRepository;
-import com.prgms.ywbook.global.IdGenerater;
+import com.prgms.ywbook.global.Generater;
 import com.prgms.ywbook.global.exception.NotFoundEntityException;
 import com.prgms.ywbook.member.domain.Member;
 import com.prgms.ywbook.member.domain.MemberRepository;
@@ -25,13 +25,13 @@ public class RentalService {
     private final RentalRepository rentalRepository;
     private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
-    private final IdGenerater idGenerater;
+    private final Generater generater;
 
-    public RentalService(RentalRepository rentalRepository, MemberRepository memberRepository, BookRepository bookRepository, IdGenerater idGenerater) {
+    public RentalService(RentalRepository rentalRepository, MemberRepository memberRepository, BookRepository bookRepository, Generater generater) {
         this.rentalRepository = rentalRepository;
         this.memberRepository = memberRepository;
         this.bookRepository = bookRepository;
-        this.idGenerater = idGenerater;
+        this.generater = generater;
     }
 
     @Transactional
@@ -44,7 +44,7 @@ public class RentalService {
                     book.setAvailable(false);
                     bookRepository.update(book);
 
-                    Rental rental = new Rental(idGenerater.generate(), member.getMemberId(), id, LocalDateTime.now());
+                    Rental rental = new Rental(generater.idGenerate(), member.getMemberId(), id, generater.timeGenerate());
                     rentalRepository.insert(rental);
                 });
     }
@@ -56,7 +56,7 @@ public class RentalService {
     }
 
     public JoinedRentalResponses findDelayBooks() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = generater.timeGenerate();
         return JoinedRentalResponses.of(rentalRepository.findJoinedRentalByRentalAt(now));
     }
 
@@ -66,7 +66,7 @@ public class RentalService {
                 .orElseThrow(() -> new NotFoundEntityException("해당 대여 기록은 존재하지 않습니다."));
 
         Book book = bookRepository.findById(rental.getBookId())
-                .orElseThrow(() -> new NotFoundEntityException("해당 대여 기록은 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundEntityException("해당 책은 존재하지 않습니다."));
 
         book.setAvailable(true);
         bookRepository.update(book);
@@ -75,6 +75,6 @@ public class RentalService {
     }
 
     private Member createMember(String phoneNumber) {
-        return memberRepository.insert(new Member(idGenerater.generate(), new PhoneNumber(phoneNumber)));
+        return memberRepository.insert(new Member(generater.idGenerate(), new PhoneNumber(phoneNumber)));
     }
 }
