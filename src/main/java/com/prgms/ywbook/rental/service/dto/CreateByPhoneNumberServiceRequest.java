@@ -4,7 +4,4 @@ import java.util.List;
 import java.util.UUID;
 
 public record CreateByPhoneNumberServiceRequest(String phoneNumber, List<UUID> bookIds) {
-    public UUID getUUID(){
-        return UUID.randomUUID();
-    }
 }

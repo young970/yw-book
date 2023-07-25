@@ -2,6 +2,7 @@ package com.prgms.ywbook.rental.service;
 
 import com.prgms.ywbook.book.domain.Book;
 import com.prgms.ywbook.book.domain.BookRepository;
+import com.prgms.ywbook.global.IdGenerater;
 import com.prgms.ywbook.global.exception.NotFoundEntityException;
 import com.prgms.ywbook.member.domain.Member;
 import com.prgms.ywbook.member.domain.MemberRepository;
@@ -24,11 +25,13 @@ public class RentalService {
     private final RentalRepository rentalRepository;
     private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
+    private final IdGenerater idGenerater;
 
-    public RentalService(RentalRepository rentalRepository, MemberRepository memberRepository, BookRepository bookRepository) {
+    public RentalService(RentalRepository rentalRepository, MemberRepository memberRepository, BookRepository bookRepository, IdGenerater idGenerater) {
         this.rentalRepository = rentalRepository;
         this.memberRepository = memberRepository;
         this.bookRepository = bookRepository;
+        this.idGenerater = idGenerater;
     }
 
     @Transactional
@@ -41,7 +44,7 @@ public class RentalService {
                     book.setAvailable(false);
                     bookRepository.update(book);
 
-                    Rental rental = new Rental(request.getUUID(), member.getMemberId(), id, LocalDateTime.now());
+                    Rental rental = new Rental(idGenerater.generate(), member.getMemberId(), id, LocalDateTime.now());
                     rentalRepository.insert(rental);
                 });
     }
@@ -72,6 +75,6 @@ public class RentalService {
     }
 
     private Member createMember(String phoneNumber) {
-        return memberRepository.insert(new Member(UUID.randomUUID(), new PhoneNumber(phoneNumber)));
+        return memberRepository.insert(new Member(idGenerater.generate(), new PhoneNumber(phoneNumber)));
     }
 }

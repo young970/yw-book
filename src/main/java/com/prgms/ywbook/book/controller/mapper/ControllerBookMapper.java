@@ -9,10 +9,5 @@ import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public interface ControllerBookMapper {
-    @Mapping(target = "id", expression = "java(createUUID())")
     CreateServiceRequest controllerDtoToServiceDto(CreateControllerRequest request);
-
-    default UUID createUUID(){
-        return UUID.randomUUID();
-    }
 }
